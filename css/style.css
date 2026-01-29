@@ -28,7 +28,7 @@ header h1 {
     letter-spacing: 2px;
 }
 
-header p {
+header h2 {
     font-size: 0.9rem;
     color: #ccc; /* Cinza claro */
 }

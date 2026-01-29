@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora Trabalhista - Sindicato dos Hoteleiros</title>
+    <!-- Link para o Favicon: Substitua 'favicon.png' pelo caminho da sua imagem -->
+    <link rel="icon" href="fotos/favcon" type="image/x-icon">
     <link rel="stylesheet" href="css/style.css">
+    
 </head>
 <body>
 
     <header>
         <div class="container">
-            <h1>SINDICATO DOS HOTELEIROS</h1>
-            <p>Sistema de Cálculo Trabalhista</p>
+            <h1>SINDEHOT - SBC</h1>
+            <h2>VERBAS CALCULADAS</h2>
         </div>
     </header>
 
@@ -19,6 +22,26 @@
         <section class="card">
             <h2>Dados do Colaborador</h2>
             <form id="calcForm">
+                <div class="form-group">
+                    <label for="nomeReclamante">Reclamante:</label>
+                    <input type="text" id="nomeReclamante" placeholder="Nome Completo do Funcionário">
+                </div>
+
+                <div class="form-group">
+                    <label for="nomeReclamada">Reclamada:</label>
+                    <input type="text" id="nomeReclamada" placeholder="Nome da Empresa">
+                </div>
+
+                <div class="form-group">
+                    <label for="dataAdmissao">Data de Admissão:</label>
+                    <input type="date" id="dataAdmissao">
+                </div>
+
+                <div class="form-group">
+                    <label for="dataAfastamento">Data de Afastamento:</label>
+                    <input type="date" id="dataAfastamento">
+                </div>
+
                 <div class="form-group">
                     <label for="salarioBase">Salário Base (R$):</label>
                     <input type="number" id="salarioBase" step="0.01" required>
@@ -70,6 +93,22 @@
         <!-- Seção de Resultados -->
         <section class="card" id="resultadoCard" style="display:none;">
             <h2>Relatório de Cálculo</h2>
+            <div class="resultado-linha">
+                <span>Reclamante:</span>
+                <span id="resNomeReclamante"></span>
+            </div>
+            <div class="resultado-linha">
+                <span>Reclamada:</span>
+                <span id="resNomeReclamada"></span>
+            </div>
+            <div class="resultado-linha">
+                <span>Data de Admissão:</span>
+                <span id="resDataAdmissao"></span>
+            </div>
+            <div class="resultado-linha">
+                <span>Data de Afastamento:</span>
+                <span id="resDataAfastamento"></span>
+            </div>
             <div class="resultado-linha">
                 <span>(+) Salário Base:</span>
                 <span id="resSalarioBase"></span>

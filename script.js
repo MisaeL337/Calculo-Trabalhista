@@ -12,6 +12,14 @@ document.getElementById('adicionalNoturno').addEventListener('change', function(
 function executarCalculo() {
     // --- 1. ENTRADA DE DADOS ---
     
+    // Captura o nome do reclamante e da reclamada
+    const nomeReclamante = document.getElementById('nomeReclamante').value;
+    const nomeReclamada = document.getElementById('nomeReclamada').value;
+
+    // Captura as datas de admissão e afastamento
+    const dataAdmissao = document.getElementById('dataAdmissao').value;
+    const dataAfastamento = document.getElementById('dataAfastamento').value;
+
     // Captura o salário base e converte para número decimal (float)
     const salarioBase = parseFloat(document.getElementById('salarioBase').value) || 0;
     
@@ -78,6 +86,10 @@ function executarCalculo() {
     // --- 3. SAÍDA (Relatório na Página) ---
     
     exibirResultadoNaPagina({
+        nomeReclamante,
+        nomeReclamada,
+        dataAdmissao,
+        dataAfastamento,
         salarioBase,
         valorTotalHE,
         valorAdicionalNoturno,
@@ -136,7 +148,18 @@ function exibirResultadoNaPagina(dados) {
     // Formata valores para moeda BRL para exibição
     const fmt = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
+    // Função auxiliar para formatar data (AAAA-MM-DD -> DD/MM/AAAA)
+    const fmtData = (dataStr) => {
+        if (!dataStr) return '-';
+        const [ano, mes, dia] = dataStr.split('-');
+        return `${dia}/${mes}/${ano}`;
+    };
+
     // Preenche os campos do relatório no HTML
+    document.getElementById('resNomeReclamante').textContent = dados.nomeReclamante || '-';
+    document.getElementById('resNomeReclamada').textContent = dados.nomeReclamada || '-';
+    document.getElementById('resDataAdmissao').textContent = fmtData(dados.dataAdmissao);
+    document.getElementById('resDataAfastamento').textContent = fmtData(dados.dataAfastamento);
     document.getElementById('resSalarioBase').textContent = fmt(dados.salarioBase);
     document.getElementById('resHorasExtras').textContent = fmt(dados.valorTotalHE);
     document.getElementById('resAdicionalNoturno').textContent = fmt(dados.valorAdicionalNoturno);
