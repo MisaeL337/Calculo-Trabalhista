@@ -42,6 +42,19 @@
                     <input type="date" id="dataAfastamento">
                 </div>
 
+                 <div class="form-group">
+                    <label for="tipoAviso">Tipo de Aviso Prévio:</label>
+                    <select id="tipoAviso">
+                        <option value="trabalhado">Trabalhado</option>
+                        <option value="indenizado">Indenizado</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="diasAviso">Dias de Aviso Prévio:</label>
+                    <input type="number" id="diasAviso" placeholder="Ex: 30">
+                </div>
+
                 <div class="form-group">
                     <label for="salarioBase">Salário Base (R$):</label>
                     <input type="number" id="salarioBase" step="0.01" required>
@@ -77,6 +90,26 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="mesesFGTS">Meses para Cálculo FGTS:</label>
+                    <input type="number" id="mesesFGTS" placeholder="Ex: 24">
+                </div>
+
+                <div class="form-group">
+                    <label for="anosEmpresa">Anos Completos de Empresa:</label>
+                    <input type="number" id="anosEmpresa" placeholder="Ex: 6">
+                </div>
+
+                <div class="form-group">
+                    <label for="mesesAtrasoAntiguidade">Meses em Atraso (Antiguidade):</label>
+                    <input type="number" id="mesesAtrasoAntiguidade" placeholder="Ex: 12">
+                </div>
+
+                <div class="form-group">
+                    <label for="valorPLR">Valor PLR (R$):</label>
+                    <input type="number" id="valorPLR" step="0.01" placeholder="Ex: 1500.00">
+                </div>
+
+                <div class="form-group">
                     <label for="inss">Desconto INSS (%):</label>
                     <input type="number" id="inss" step="0.1" placeholder="Ex: 7.5">
                 </div>
@@ -85,6 +118,18 @@
                     <label for="irrf">Desconto IRRF (%):</label>
                     <input type="number" id="irrf" step="0.1" placeholder="Ex: 0">
                 </div>
+
+                <div class="form-group">
+                    <label for="verbasAdicionaisValor">Verbas Adicionais (R$):</label>
+                    <input type="number" id="verbasAdicionaisValor" step="0.01" placeholder="Ex: 250.00">
+                </div>
+
+                <div class="form-group">
+                    <label for="observacoes">Observações:</label>
+                    <textarea id="observacoes" rows="3" placeholder="Ex: Período de experiência não cumprido."></textarea>
+                </div>
+
+               
 
                 <button type="button" onclick="executarCalculo()">Calcular Folha</button>
             </form>
@@ -109,6 +154,10 @@
                 <span>Data de Afastamento:</span>
                 <span id="resDataAfastamento"></span>
             </div>
+             <div class="resultado-linha">
+                <span>(+) Aviso Prévio:</span>
+                <span id="resAvisoPrevio"></span>
+            </div>
             <div class="resultado-linha">
                 <span>(+) Salário Base:</span>
                 <span id="resSalarioBase"></span>
@@ -129,6 +178,15 @@
                 <span>(+) 13º Salário Prop.:</span>
                 <span id="resDecimoTerceiro"></span>
             </div>
+            <div class="resultado-linha">
+                <span id="lblAbonoAntiguidade">(+) Abono por Antiguidade:</span>
+                <span id="resAbonoAntiguidade"></span>
+            </div>
+           
+            <div class="resultado-linha">
+                <span>(+) Outras Verbas:</span>
+                <span id="resVerbasAdicionais"></span>
+            </div>
             <hr class="resultado-divisor">
             <div class="resultado-linha total">
                 <span>(=) SALÁRIO BRUTO TOTAL:</span>
@@ -148,10 +206,27 @@
                 <span>(=) SALÁRIO LÍQUIDO:</span>
                 <span id="resSalarioLiquido"></span>
             </div>
+            
+            <div class="resultado-linha">
+                <span>(+) PLR (Isento de encargos):</span>
+                <span id="resPLR"></span>
+            </div>
+
+            <hr class="resultado-divisor">
+            <div class="resultado-linha total-final" style="background-color: #e8f5e9;">
+                <span>(=) TOTAL A RECEBER:</span>
+                <span id="resTotalReceber"></span>
+            </div>
+
             <hr class="resultado-divisor">
             <div class="resultado-linha info">
-                <span>(i) FGTS a recolher (8%):</span>
-                <span id="resFGTS"></span>
+                <span>(i) FGTS Acumulado (Estimado):</span>
+                <span id="resFGTSAcumulado"></span>
+            </div>
+
+            <div class="resultado-linha obs" id="linhaObservacoes" style="display:none; margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px;">
+                <span style="font-weight: bold; display: block; margin-bottom: 5px;">Observações:</span>
+                <span id="resObservacoes" style="font-style: italic; color: #555;"></span>
             </div>
         </section>
     </main>
