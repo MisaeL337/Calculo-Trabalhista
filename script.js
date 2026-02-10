@@ -15,6 +15,7 @@ function executarCalculo() {
     // Captura o nome do reclamante e da reclamada
     const nomeReclamante = document.getElementById('nomeReclamante').value;
     const nomeReclamada = document.getElementById('nomeReclamada').value;
+    const motivoRescisao = document.getElementById('motivoRescisao').value;
 
     // Captura as datas de admissão e afastamento
     const dataAdmissao = document.getElementById('dataAdmissao').value;
@@ -35,15 +36,13 @@ function executarCalculo() {
     // Captura dias de férias vencidas
     const diasFerias = parseInt(document.getElementById('diasFerias').value) || 0;
     
-    // Captura meses trabalhados para o 13º salário
-    const meses13 = parseInt(document.getElementById('meses13').value) || 0;
-    
-    // Captura meses para cálculo do FGTS acumulado
-    const mesesFGTS = parseInt(document.getElementById('mesesFGTS').value) || 0;
-
-    // Captura dados para Abono por Antiguidade
-    const anosEmpresa = parseInt(document.getElementById('anosEmpresa').value) || 0;
+    // Captura meses de atraso (opcional)
     const mesesAtrasoAntiguidade = parseInt(document.getElementById('mesesAtrasoAntiguidade').value) || 0;
+
+    // --- CÁLCULO AUTOMÁTICO DE PERÍODOS ---
+    // Substitui a leitura dos inputs removidos pelo cálculo direto
+    const periodos = calcularPeriodosTrabalhados(dataAdmissao, dataAfastamento);
+    const { anosEmpresa, mesesFGTS, meses13, mesesFeriasProp } = periodos;
 
     // Calcula percentual de antiguidade para exibição (5% a cada 5 anos)
     const percAntiguidade = anosEmpresa > 5 ? Math.floor(anosEmpresa / 5) * 5 : 0;
@@ -57,11 +56,20 @@ function executarCalculo() {
     // Captura outras verbas (texto ou número)
     const outrasVerbasValor = parseFloat(document.getElementById('verbasAdicionaisValor').value) || 0;
 
+    // Captura Domingos e Feriados
+    const qtdDomingos = parseInt(document.getElementById('qtdDomingos').value) || 0;
+    const qtdFeriadosTrabalhados = parseInt(document.getElementById('qtdFeriadosTrabalhados').value) || 0;
+
+    // Captura VR e VA
+    const valorVR = parseFloat(document.getElementById('valorVR').value) || 0;
+    const valorVA = parseFloat(document.getElementById('valorVA').value) || 0;
+
     // Captura o campo de texto de observações
     const observacoes = document.getElementById('observacoes').value;
     
     // Captura valor da PLR
-    const valorPLRInput = parseFloat(document.getElementById('valorPLR').value) || 0;
+    const valorPLRAnual = parseFloat(document.getElementById('valorPLRAnual').value) || 0;
+    const mesesPLR = parseInt(document.getElementById('mesesPLR').value) || 0;
 
     // Captura dados do Aviso Prévio
     const tipoAviso = document.getElementById('tipoAviso').value;
@@ -81,13 +89,29 @@ function executarCalculo() {
         calcularAdicionalNoturno(valorHoraNormal, horasNoturnas) : 0;
 
     // Calcula o valor das férias (proporcional aos dias + 1/3 constitucional)
-    const valorFeriasTotal = calcularFerias(salarioBase, diasFerias);
+    const valorFeriasVencidas = calcularFeriasDias(salarioBase, diasFerias);
+    const valorFeriasProporcionais = calcularFeriasMeses(salarioBase, mesesFeriasProp);
 
     // Calcula o 13º salário proporcional aos meses trabalhados
     const valorDecimoTerceiro = calcularDecimoTerceiro(salarioBase, meses13);
 
     // Calcula o Aviso Prévio (Indenizado entra no cálculo, Trabalhado é 0 aqui)
     const valorAvisoPrevio = calcularValorAviso(salarioBase, tipoAviso, diasAviso);
+    
+    // Reflexos do Aviso Prévio Indenizado
+    let reflexoAviso13 = 0;
+    let reflexoAvisoFerias = 0;
+    if (tipoAviso === 'indenizado') {
+        // 1/12 de 13º
+        reflexoAviso13 = salarioBase / 12;
+        // 1/12 de Férias + 1/3
+        const umDozeAvosFerias = salarioBase / 12;
+        reflexoAvisoFerias = umDozeAvosFerias + (umDozeAvosFerias / 3);
+    }
+
+    // Domingos e Feriados (Dobro)
+    const valorDomingos = (salarioBase / 30) * 2 * qtdDomingos;
+    const valorFeriadosTrab = (salarioBase / 30) * 2 * qtdFeriadosTrabalhados;
 
     // Calcula o Abono por Antiguidade (Regra: > 5 anos)
     const valorAbonoAntiguidade = calcularAbonoAntiguidade(salarioBase, anosEmpresa, mesesAtrasoAntiguidade);
@@ -97,15 +121,31 @@ function executarCalculo() {
     const valorFGTSPadrao = calcularFGTS(salarioBase, mesesFGTS);
     const valorFGTSAbono = valorAbonoAntiguidade * 0.08;
     const valorFGTSAcumulado = valorFGTSPadrao + valorFGTSAbono;
+    
+    // Multa de 40% FGTS
+    let multaFGTS = 0;
+    if (motivoRescisao === 'semJustaCausa') {
+        multaFGTS = valorFGTSAcumulado * 0.40;
+    }
 
     // Calcula a PLR (Valor direto)
-    const valorPLR = calcularPLR(valorPLRInput);
+    const valorPLR = calcularPLR(valorPLRAnual, mesesPLR);
+
+    // Calcula VR e VA (Indenizatório) - Considerar apenas 1 mês (último trabalhado)
+    const totalVR = valorVR;
+    const totalVA = valorVA;
+    const totalBeneficios = totalVR + totalVA;
+
+    // Contagem informativa de feriados no período
+    const totalFeriadosPeriodo = contarFeriados(dataAdmissao, dataAfastamento);
 
     // Soma os proventos tributáveis para base de cálculo (Salário + HE + Adicional)
-    // Nota: Férias e 13º geralmente têm tributação exclusiva/separada, 
-    // mas para este exercício somaremos tudo no Bruto Geral. O Abono entra aqui.
-    const salarioBruto = salarioBase + valorTotalHE + valorAdicionalNoturno + valorFeriasTotal + 
-                         valorDecimoTerceiro + valorAvisoPrevio + outrasVerbasValor + valorAbonoAntiguidade;
+    // Inclui Domingos e Feriados trabalhados.
+    // PLR, VR, VA e Aviso Indenizado (e seus reflexos) geralmente não entram na base de cálculo de INSS mensal comum na rescisão da mesma forma,
+    // mas para manter a estrutura simples do código anterior, vamos somar as verbas salariais no Bruto.
+    const salarioBruto = salarioBase + valorTotalHE + valorAdicionalNoturno + valorFeriasVencidas + valorFeriasProporcionais + 
+                         valorDecimoTerceiro + valorAvisoPrevio + reflexoAviso13 + reflexoAvisoFerias +
+                         outrasVerbasValor + valorAbonoAntiguidade + valorDomingos + valorFeriadosTrab;
 
     // Calcula o valor do desconto do INSS baseado no Bruto
     const valorINSS = salarioBruto * (percINSS / 100);
@@ -120,8 +160,15 @@ function executarCalculo() {
     // A PLR NÃO entra aqui para garantir que Líquido <= Bruto
     const salarioLiquido = salarioBruto - totalDescontos;
 
-    // Calcula o Total a Receber (Salário Líquido + PLR)
-    const totalReceber = salarioLiquido + valorPLR;
+    // Calcula o Total a Receber (Salário Líquido + PLR + Benefícios)
+    const totalReceber = salarioLiquido + valorPLR + totalBeneficios;
+
+    // --- CÁLCULO DOS TOTAIS ORGANIZADOS (PARA EXIBIÇÃO) ---
+    // 1. Total da Rescisão (Aviso, Reflexos, Férias, 13º)
+    const totalRescisao = valorAvisoPrevio + reflexoAviso13 + reflexoAvisoFerias + valorFeriasVencidas + valorFeriasProporcionais + valorDecimoTerceiro;
+
+    // 2. Total da Folha / Extras (Salário, HE, Domingos, Feriados, Adicional, Benefícios, PLR, Outras, Abono)
+    const totalFolhaExtras = salarioBase + valorTotalHE + valorDomingos + valorFeriadosTrab + valorAdicionalNoturno + totalBeneficios + valorPLR + outrasVerbasValor + valorAbonoAntiguidade;
 
     // --- 3. SAÍDA (Relatório na Página) ---
     
@@ -131,27 +178,127 @@ function executarCalculo() {
         dataAdmissao,
         dataAfastamento,
         salarioBase,
+        anosEmpresa,
+        mesesFGTS,
+        meses13,
+        mesesFeriasProp,
         valorTotalHE,
         valorAdicionalNoturno,
-        valorFeriasTotal,
+        valorFeriasVencidas,
+        valorFeriasProporcionais,
         valorDecimoTerceiro,
         valorAvisoPrevio,
+        reflexoAviso13,
+        reflexoAvisoFerias,
         valorAbonoAntiguidade,
         mesesAtrasoAntiguidade,
         percAntiguidade,
         valorFGTSAcumulado,
+        multaFGTS,
         outrasVerbasValor,
         observacoes,
         valorPLR,
+        totalBeneficios,
+        valorDomingos,
+        valorFeriadosTrab,
+        totalFeriadosPeriodo,
         salarioBruto,
+        totalRescisao,
+        totalFolhaExtras,
         valorINSS,
         valorIRRF,
-        salarioLiquido,
         totalReceber
     });
 }
 
 // --- FUNÇÕES DE CÁLCULO ---
+
+/**
+ * Calcula os períodos de tempo baseados nas datas de admissão e afastamento.
+ * Contém a lógica que antes estava em calcularDatasAutomaticas.
+ */
+function calcularPeriodosTrabalhados(dtAdm, dtAfast) {
+    const resultado = {
+        anosEmpresa: 0,
+        mesesFGTS: 0,
+        meses13: 0,
+        mesesFeriasProp: 0
+    };
+
+    if (!dtAdm || !dtAfast) return resultado;
+
+    const dataInicio = new Date(dtAdm);
+    const dataFim = new Date(dtAfast);
+
+    if (dataFim < dataInicio) return resultado;
+
+    // 1. Anos Completos de Empresa
+    let anos = dataFim.getFullYear() - dataInicio.getFullYear();
+    const m = dataFim.getMonth() - dataInicio.getMonth();
+    if (m < 0 || (m === 0 && dataFim.getDate() < dataInicio.getDate())) {
+        anos--;
+    }
+    resultado.anosEmpresa = anos;
+
+    // 2. Meses Totais para FGTS
+    let mesesTotais = (dataFim.getFullYear() - dataInicio.getFullYear()) * 12;
+    mesesTotais += dataFim.getMonth() - dataInicio.getMonth();
+    if (dataFim.getDate() >= 15) {
+        mesesTotais += 1;
+    }
+    resultado.mesesFGTS = Math.max(0, mesesTotais);
+
+    // 3. Meses para 13º Salário
+    let dataInicio13 = new Date(dataFim.getFullYear(), 0, 1);
+    if (dataInicio > dataInicio13) {
+        dataInicio13 = dataInicio;
+    }
+    
+    let meses13 = 0;
+    let tempDate = new Date(dataInicio13);
+    while (tempDate <= dataFim) {
+        const ano = tempDate.getFullYear();
+        const mes = tempDate.getMonth();
+        const ultimoDiaMes = new Date(ano, mes + 1, 0).getDate();
+        let diaFimMes = ultimoDiaMes;
+        
+        if (ano === dataFim.getFullYear() && mes === dataFim.getMonth()) {
+            diaFimMes = dataFim.getDate();
+        }
+
+        let diaInicioMes = 1;
+        if (ano === dataInicio13.getFullYear() && mes === dataInicio13.getMonth()) {
+            diaInicioMes = dataInicio13.getDate();
+        }
+
+        const diasTrabalhadosNoMes = diaFimMes - diaInicioMes + 1;
+        if (diasTrabalhadosNoMes >= 15) {
+            meses13++;
+        }
+        tempDate = new Date(ano, mes + 1, 1);
+    }
+    resultado.meses13 = meses13;
+
+    // 4. Férias Proporcionais
+    let inicioPeriodoAquisitivo = new Date(dataInicio);
+    while (new Date(inicioPeriodoAquisitivo.getFullYear() + 1, inicioPeriodoAquisitivo.getMonth(), inicioPeriodoAquisitivo.getDate()) <= dataFim) {
+        inicioPeriodoAquisitivo.setFullYear(inicioPeriodoAquisitivo.getFullYear() + 1);
+    }
+    
+    let mesesFeriasProp = 0;
+    let cursor = new Date(inicioPeriodoAquisitivo);
+    while (cursor < dataFim) {
+        let proximoMes = new Date(cursor.getFullYear(), cursor.getMonth() + 1, cursor.getDate());
+        let dataCorte = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate() + 14);
+        if (dataFim >= dataCorte) {
+            mesesFeriasProp++;
+        }
+        cursor = proximoMes;
+    }
+    resultado.mesesFeriasProp = Math.min(12, mesesFeriasProp);
+
+    return resultado;
+}
 
 function calcularValorHora(salario) {
     // Divisor padrão mensalista é 220 horas
@@ -172,7 +319,7 @@ function calcularAdicionalNoturno(valorHora, horasNoturnas) {
     return valorHoraNoturna * horasNoturnas;
 }
 
-function calcularFerias(salario, dias) {
+function calcularFeriasDias(salario, dias) {
     // Calcula o valor de 1 dia de trabalho (Salário / 30)
     const valorDia = salario / 30;
     // Calcula o valor pelos dias de férias gozados/vencidos
@@ -181,6 +328,12 @@ function calcularFerias(salario, dias) {
     const tercoConstitucional = valorDiasFerias / 3;
     // Retorna a soma
     return valorDiasFerias + tercoConstitucional;
+}
+
+function calcularFeriasMeses(salario, meses) {
+    const valorProporcional = (salario / 12) * meses;
+    const terco = valorProporcional / 3;
+    return valorProporcional + terco;
 }
 
 function calcularDecimoTerceiro(salario, meses) {
@@ -202,11 +355,9 @@ function calcularFGTS(salarioBase, mesesFGTS) {
     return salarioBase * 0.08 * mesesFGTS;
 }
 
-function calcularPLR(valorPLR) {
-    // A PLR entra integralmente no valor a receber neste contexto
-    // (Assumindo valor líquido ou isento para simplificação conforme pedido, 
-    // já que não deve entrar na base de INSS/Férias)
-    return valorPLR;
+function calcularPLR(valorAnual, meses) {
+    if (!valorAnual || !meses) return 0;
+    return (valorAnual / 12) * meses;
 }
 
 function calcularAbonoAntiguidade(salario, anos, mesesAtraso) {
@@ -218,6 +369,37 @@ function calcularAbonoAntiguidade(salario, anos, mesesAtraso) {
 
     // Regra 4: (salário base * percentual) * meses em atraso
     return (salario * percentual) * mesesAtraso;
+}
+
+function contarFeriados(inicioStr, fimStr) {
+    if (!inicioStr || !fimStr) return 0;
+    const inicio = new Date(inicioStr);
+    const fim = new Date(fimStr);
+    
+    // Lista simplificada de feriados nacionais fixos (Mês-Dia)
+    const feriadosFixos = [
+        "01-01", // Confraternização Universal
+        "04-21", // Tiradentes
+        "05-01", // Dia do Trabalho
+        "09-07", // Independência
+        "10-12", // N. Sra. Aparecida
+        "11-02", // Finados
+        "11-15", // Proclamação da República
+        "12-25"  // Natal
+    ];
+
+    let count = 0;
+    // Itera pelos anos
+    for (let ano = inicio.getFullYear(); ano <= fim.getFullYear(); ano++) {
+        feriadosFixos.forEach(f => {
+            const [mes, dia] = f.split('-');
+            const dataFeriado = new Date(ano, parseInt(mes)-1, parseInt(dia));
+            if (dataFeriado >= inicio && dataFeriado <= fim) {
+                count++;
+            }
+        });
+    }
+    return count;
 }
 
 /**
@@ -272,14 +454,30 @@ function exibirResultadoNaPagina(dados) {
     atualizarLinha('resDataAdmissao', fmtData(dados.dataAdmissao), false);
     atualizarLinha('resDataAfastamento', fmtData(dados.dataAfastamento), false);
 
+    // --- 1.1 RESUMO DO PERÍODO ---
+    atualizarLinha('resAnosEmpresa', dados.anosEmpresa, false);
+    atualizarLinha('resMesesFGTS', dados.mesesFGTS, false);
+    atualizarLinha('resMeses13', dados.meses13 + " avos", false);
+    atualizarLinha('resMesesFeriasProp', dados.mesesFeriasProp + " avos", false);
+
     // --- 2. VERBAS ---
     atualizarLinha('resSalarioBase', dados.salarioBase);
     atualizarLinha('resAvisoPrevio', dados.valorAvisoPrevio);
+    atualizarLinha('resReflexoAviso13', dados.reflexoAviso13);
+    atualizarLinha('resReflexoAvisoFerias', dados.reflexoAvisoFerias);
     atualizarLinha('resHorasExtras', dados.valorTotalHE);
     atualizarLinha('resAdicionalNoturno', dados.valorAdicionalNoturno);
-    atualizarLinha('resFerias', dados.valorFeriasTotal);
+    atualizarLinha('resDomingos', dados.valorDomingos);
+    atualizarLinha('resFeriadosTrab', dados.valorFeriadosTrab);
+    atualizarLinha('resFeriasVencidas', dados.valorFeriasVencidas);
+    atualizarLinha('resFeriasProporcionais', dados.valorFeriasProporcionais);
     atualizarLinha('resDecimoTerceiro', dados.valorDecimoTerceiro);
+    atualizarLinha('resVRVA', dados.totalBeneficios);
     atualizarLinha('resAbonoAntiguidade', dados.valorAbonoAntiguidade);
+    
+    // Novos Totais de Grupo
+    atualizarLinha('resTotalRescisao', dados.totalRescisao);
+    atualizarLinha('resTotalFolhaExtras', dados.totalFolhaExtras);
     
     // Atualiza o texto do rótulo do Abono com os detalhes (Percentual e Meses) se houver valor
     if (dados.valorAbonoAntiguidade > 0) {
@@ -290,18 +488,16 @@ function exibirResultadoNaPagina(dados) {
     atualizarLinha('resVerbasAdicionais', dados.outrasVerbasValor);
 
     // --- 3. TOTAIS E DESCONTOS ---
-    atualizarLinha('resSalarioBruto', dados.salarioBruto);
     
     atualizarLinha('resINSS', dados.valorINSS, true, true);
     atualizarLinha('resIRRF', dados.valorIRRF, true, true);
     
-    atualizarLinha('resSalarioLiquido', dados.salarioLiquido);
-    
-    atualizarLinha('resPLR', dados.valorPLR);
     
     atualizarLinha('resTotalReceber', dados.totalReceber);
     
     atualizarLinha('resFGTSAcumulado', dados.valorFGTSAcumulado);
+    atualizarLinha('resMultaFGTS', dados.multaFGTS);
+    atualizarLinha('resTotalFeriadosPeriodo', dados.totalFeriadosPeriodo, false); // false para não formatar como moeda
 
     // --- 4. OBSERVAÇÕES ---
     const linhaObs = document.getElementById('linhaObservacoes');

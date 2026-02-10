@@ -42,6 +42,15 @@
                     <input type="date" id="dataAfastamento">
                 </div>
 
+                <div class="form-group">
+                    <label for="motivoRescisao">Motivo da Rescisão:</label>
+                    <select id="motivoRescisao">
+                        <option value="semJustaCausa">Dispensa sem Justa Causa</option>
+                        <option value="pedidoDemissao">Pedido de Demissão</option>
+                        <option value="justaCausa">Dispensa por Justa Causa</option>
+                    </select>
+                </div>
+
                  <div class="form-group">
                     <label for="tipoAviso">Tipo de Aviso Prévio:</label>
                     <select id="tipoAviso">
@@ -80,33 +89,43 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="diasFerias">Dias de Férias Vencidas:</label>
+                    <label for="diasFerias">Férias Vencidas (Dias):</label>
                     <input type="number" id="diasFerias" placeholder="Ex: 30">
                 </div>
 
                 <div class="form-group">
-                    <label for="meses13">Meses Trabalhados (13º):</label>
-                    <input type="number" id="meses13" max="12" placeholder="Ex: 12">
+                    <label for="qtdDomingos">Domingos Trabalhados (Qtd):</label>
+                    <input type="number" id="qtdDomingos" placeholder="Ex: 2">
                 </div>
 
                 <div class="form-group">
-                    <label for="mesesFGTS">Meses para Cálculo FGTS:</label>
-                    <input type="number" id="mesesFGTS" placeholder="Ex: 24">
+                    <label for="qtdFeriadosTrabalhados">Feriados Trabalhados (Qtd):</label>
+                    <input type="number" id="qtdFeriadosTrabalhados" placeholder="Ex: 1">
                 </div>
 
                 <div class="form-group">
-                    <label for="anosEmpresa">Anos Completos de Empresa:</label>
-                    <input type="number" id="anosEmpresa" placeholder="Ex: 6">
+                    <label for="valorVR">Vale Refeição Mensal (R$):</label>
+                    <input type="number" id="valorVR" step="0.01" placeholder="Ex: 25.00">
                 </div>
 
                 <div class="form-group">
-                    <label for="mesesAtrasoAntiguidade">Meses em Atraso (Antiguidade):</label>
-                    <input type="number" id="mesesAtrasoAntiguidade" placeholder="Ex: 12">
+                    <label for="valorVA">Vale Alimentação Mensal (R$):</label>
+                    <input type="number" id="valorVA" step="0.01" placeholder="Ex: 200.00">
                 </div>
 
                 <div class="form-group">
-                    <label for="valorPLR">Valor PLR (R$):</label>
-                    <input type="number" id="valorPLR" step="0.01" placeholder="Ex: 1500.00">
+                    <label for="mesesAtrasoAntiguidade">Meses em Atraso (Antiguidade - Opcional):</label>
+                    <input type="number" id="mesesAtrasoAntiguidade" placeholder="Ex: 12" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="valorPLRAnual">Valor PLR Anual (R$):</label>
+                    <input type="number" id="valorPLRAnual" step="0.01" placeholder="Ex: 1500.00">
+                </div>
+
+                <div class="form-group">
+                    <label for="mesesPLR">Meses Trabalhados PLR:</label>
+                    <input type="number" id="mesesPLR" placeholder="Ex: 6">
                 </div>
 
                 <div class="form-group">
@@ -138,6 +157,7 @@
         <!-- Seção de Resultados -->
         <section class="card" id="resultadoCard" style="display:none;">
             <h2>Relatório de Cálculo</h2>
+            <!-- Cabeçalho do Relatório -->
             <div class="resultado-linha">
                 <span>Reclamante:</span>
                 <span id="resNomeReclamante"></span>
@@ -154,45 +174,106 @@
                 <span>Data de Afastamento:</span>
                 <span id="resDataAfastamento"></span>
             </div>
-             <div class="resultado-linha">
-                <span>(+) Aviso Prévio:</span>
+
+            <!-- Bloco de Resumo do Período Calculado -->
+            <hr class="resultado-divisor">
+            <div class="resultado-linha" style="background-color: #f9f9f9; font-weight: bold; justify-content: center;">
+                <span>RESUMO DO PERÍODO CALCULADO</span>
+            </div>
+            <div class="resultado-linha">
+                <span>Tempo de Casa (Anos):</span>
+                <span id="resAnosEmpresa"></span>
+            </div>
+            <div class="resultado-linha">
+                <span>Meses Trabalhados (FGTS):</span>
+                <span id="resMesesFGTS"></span>
+            </div>
+            <div class="resultado-linha">
+                <span>Avos de 13º Salário:</span>
+                <span id="resMeses13"></span>
+            </div>
+            <div class="resultado-linha">
+                <span>Avos de Férias Prop.:</span>
+                <span id="resMesesFeriasProp"></span>
+            </div>
+            <hr class="resultado-divisor">
+
+            <!-- 1. Grupo Rescisão -->
+            <div class="grupo-titulo">1. Verbas Rescisórias</div>
+            <div class="resultado-linha">
+                <span>Aviso Prévio:</span>
                 <span id="resAvisoPrevio"></span>
             </div>
             <div class="resultado-linha">
-                <span>(+) Salário Base:</span>
+                <span>Reflexo Aviso (13º):</span>
+                <span id="resReflexoAviso13"></span>
+            </div>
+            <div class="resultado-linha">
+                <span>Reflexo Aviso (Férias + 1/3):</span>
+                <span id="resReflexoAvisoFerias"></span>
+            </div>
+            <div class="resultado-linha">
+                <span>Férias Vencidas + 1/3:</span>
+                <span id="resFeriasVencidas"></span>
+            </div>
+            <div class="resultado-linha">
+                <span>Férias Proporcionais + 1/3:</span>
+                <span id="resFeriasProporcionais"></span>
+            </div>
+            <div class="resultado-linha">
+                <span>13º Salário Prop.:</span>
+                <span id="resDecimoTerceiro"></span>
+            </div>
+            <div class="resultado-linha total-grupo">
+                <span>Total da Rescisão:</span>
+                <span id="resTotalRescisao"></span>
+            </div>
+
+            <!-- 2. Grupo Folha / Extras -->
+            <div class="grupo-titulo">2. Folha e Extras</div>
+            <div class="resultado-linha">
+                <span>Salário Base:</span>
                 <span id="resSalarioBase"></span>
             </div>
             <div class="resultado-linha">
-                <span>(+) Horas Extras (50%):</span>
+                <span>Horas Extras (50%):</span>
                 <span id="resHorasExtras"></span>
             </div>
             <div class="resultado-linha">
-                <span>(+) Adicional Noturno:</span>
+                <span>Domingos Trabalhados (100%):</span>
+                <span id="resDomingos"></span>
+            </div>
+            <div class="resultado-linha">
+                <span>Feriados Trabalhados (100%):</span>
+                <span id="resFeriadosTrab"></span>
+            </div>
+            <div class="resultado-linha">
+                <span>Adicional Noturno:</span>
                 <span id="resAdicionalNoturno"></span>
             </div>
             <div class="resultado-linha">
-                <span>(+) Férias + 1/3:</span>
-                <span id="resFerias"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>(+) 13º Salário Prop.:</span>
-                <span id="resDecimoTerceiro"></span>
-            </div>
-            <div class="resultado-linha">
-                <span id="lblAbonoAntiguidade">(+) Abono por Antiguidade:</span>
+                <span id="lblAbonoAntiguidade">Abono por Antiguidade:</span>
                 <span id="resAbonoAntiguidade"></span>
             </div>
-           
             <div class="resultado-linha">
-                <span>(+) Outras Verbas:</span>
+                <span>Vale Refeição/Alimentação:</span>
+                <span id="resVRVA"></span>
+            </div>
+            <div class="resultado-linha">
+                <span>PLR:</span>
+                <span id="resPLR"></span>
+            </div>
+            <div class="resultado-linha">
+                <span>Outras Verbas:</span>
                 <span id="resVerbasAdicionais"></span>
             </div>
-            <hr class="resultado-divisor">
-            <div class="resultado-linha total">
-                <span>(=) SALÁRIO BRUTO TOTAL:</span>
-                <span id="resSalarioBruto"></span>
+            <div class="resultado-linha total-grupo">
+                <span>Total da Folha / Extras:</span>
+                <span id="resTotalFolhaExtras"></span>
             </div>
-            <hr class="resultado-divisor">
+
+            <!-- Descontos -->
+            <div class="grupo-titulo">Descontos</div>
             <div class="resultado-linha desconto">
                 <span>(-) Desconto INSS:</span>
                 <span id="resINSS"></span>
@@ -201,20 +282,11 @@
                 <span>(-) Desconto IRRF:</span>
                 <span id="resIRRF"></span>
             </div>
-            <hr class="resultado-divisor">
-            <div class="resultado-linha total-final">
-                <span>(=) SALÁRIO LÍQUIDO:</span>
-                <span id="resSalarioLiquido"></span>
-            </div>
-            
-            <div class="resultado-linha">
-                <span>(+) PLR (Isento de encargos):</span>
-                <span id="resPLR"></span>
-            </div>
 
             <hr class="resultado-divisor">
-            <div class="resultado-linha total-final" style="background-color: #e8f5e9;">
-                <span>(=) TOTAL A RECEBER:</span>
+            <!-- 3. Total Geral -->
+            <div class="resultado-linha total-final">
+                <span>(=) TOTAL GERAL:</span>
                 <span id="resTotalReceber"></span>
             </div>
 
@@ -222,6 +294,14 @@
             <div class="resultado-linha info">
                 <span>(i) FGTS Acumulado (Estimado):</span>
                 <span id="resFGTSAcumulado"></span>
+            </div>
+            <div class="resultado-linha info">
+                <span>(i) Multa FGTS (40%):</span>
+                <span id="resMultaFGTS"></span>
+            </div>
+            <div class="resultado-linha info">
+                <span>(i) Feriados no Período (Total):</span>
+                <span id="resTotalFeriadosPeriodo"></span>
             </div>
 
             <div class="resultado-linha obs" id="linhaObservacoes" style="display:none; margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px;">
