@@ -48,6 +48,7 @@
                         <option value="semJustaCausa">Dispensa sem Justa Causa</option>
                         <option value="pedidoDemissao">Pedido de Demissão</option>
                         <option value="justaCausa">Dispensa por Justa Causa</option>
+                        <option value="semRegistro">Sem Registro</option>
                     </select>
                 </div>
 
@@ -89,8 +90,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="diasFerias">Férias Vencidas (Dias):</label>
-                    <input type="number" id="diasFerias" placeholder="Ex: 30">
+                    <label for="mesesFeriasVencidas">Férias Vencidas (Meses):</label>
+                    <input type="number" id="mesesFeriasVencidas" placeholder="Ex: 1 (para 1 ano vencido)">
                 </div>
 
                 <div class="form-group">
@@ -104,19 +105,35 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="recebiaVR">Você recebia Vale Refeição?</label>
-                    <select id="recebiaVR">
-                        <option value="nao">Não</option>
-                        <option value="sim">Sim</option>
-                    </select>
+                    <label for="dsrQtd">DSR (Qtd):</label>
+                    <input type="number" id="dsrQtd" placeholder="Quantidade de DSR">
                 </div>
 
                 <div class="form-group">
-                    <label for="recebiaVA">Você recebia Vale Alimentação?</label>
-                    <select id="recebiaVA">
-                        <option value="nao">Não</option>
+                    <label for="forneciaAlimentacao">A empresa fornecia refeição ou vale refeição?</label>
+                    <select id="forneciaAlimentacao">
                         <option value="sim">Sim</option>
+                        <option value="nao">Não</option>
                     </select>
+                </div>
+
+                <!-- Campos condicionais para Alimentação (Quando Não Fornecia) -->
+                <div id="divIndenizacaoAlimentacao" style="display:none; border: 1px dashed #ccc; padding: 10px; margin-bottom: 15px;">
+                    <label style="color: #c00;">Indenização de Alimentação (Cálculo Manual)</label>
+                    
+                    <div class="form-group">
+                        <label for="mesesSemAlimentacao">Período sem fornecimento (Meses):</label>
+                        <input type="number" id="mesesSemAlimentacao" placeholder="Qtd Meses">
+                    </div>
+                    <div class="form-group">
+                        <label for="diasSemAlimentacao">Período sem fornecimento (Dias):</label>
+                        <input type="number" id="diasSemAlimentacao" placeholder="Qtd Dias">
+                    </div>
+                    <div class="form-group">
+                        <label for="valorIndenizacaoAlimentacao">Valor total da alimentação a ser indenizado (R$):</label>
+                        <input type="number" id="valorIndenizacaoAlimentacao" step="0.01" placeholder="Digite o valor calculado manualmente">
+                        <small style="display:block; margin-top:5px; color:#555;">* O sistema não calcula este valor automaticamente.</small>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -147,6 +164,18 @@
                 <div class="form-group">
                     <label for="verbasAdicionaisValor">Verbas Adicionais (R$):</label>
                     <input type="number" id="verbasAdicionaisValor" step="0.01" placeholder="Ex: 250.00">
+                </div>
+
+                <div class="form-group">
+                    <label for="seguroDesemprego">Seguro-Desemprego (Parcelas):</label>
+                    <select id="seguroDesemprego">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -254,6 +283,10 @@
                 <span id="resFeriadosTrab"></span>
             </div>
             <div class="resultado-linha">
+                <span>DSR (100%):</span>
+                <span id="resDSR"></span>
+            </div>
+            <div class="resultado-linha">
                 <span>Adicional Noturno:</span>
                 <span id="resAdicionalNoturno"></span>
             </div>
@@ -262,8 +295,8 @@
                 <span id="resAbonoAntiguidade"></span>
             </div>
             <div class="resultado-linha">
-                <span>Vale Refeição/Alimentação:</span>
-                <span id="resVRVA"></span>
+                <span>Indenização Alimentação:</span>
+                <span id="resIndenizacaoAlimentacao"></span>
             </div>
             <div class="resultado-linha">
                 <span>PLR:</span>
@@ -308,6 +341,10 @@
             <div class="resultado-linha info">
                 <span>(i) Feriados no Período (Total):</span>
                 <span id="resTotalFeriadosPeriodo"></span>
+            </div>
+            <div class="resultado-linha info">
+                <span>(i) Seguro-Desemprego (Parcelas):</span>
+                <span id="resSeguroDesemprego"></span>
             </div>
 
             <div class="resultado-linha obs" id="linhaObservacoes" style="display:none; margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px;">

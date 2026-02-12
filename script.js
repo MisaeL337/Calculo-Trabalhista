@@ -6,6 +6,12 @@ document.getElementById('adicionalNoturno').addEventListener('change', function(
     divHoras.style.display = this.value === 'sim' ? 'block' : 'none';
 });
 
+// Lógica para exibir campos de indenização de alimentação se "Não" for selecionado
+document.getElementById('forneciaAlimentacao').addEventListener('change', function() {
+    const divIndenizacao = document.getElementById('divIndenizacaoAlimentacao');
+    divIndenizacao.style.display = this.value === 'nao' ? 'block' : 'none';
+});
+
 /**
  * Função principal que orquestra a coleta de dados, cálculos e exibição.
  */
@@ -33,8 +39,8 @@ function executarCalculo() {
     // Captura as horas noturnas trabalhadas (apenas se aplicável)
     const horasNoturnas = parseFloat(document.getElementById('horasNoturnas').value) || 0;
     
-    // Captura dias de férias vencidas
-    const diasFerias = parseInt(document.getElementById('diasFerias').value) || 0;
+    // Captura MESES de férias vencidas (Alterado conforme solicitação)
+    const mesesFeriasVencidas = parseInt(document.getElementById('mesesFeriasVencidas').value) || 0;
     
     // Captura meses de atraso (opcional)
     const mesesAtrasoAntiguidade = parseInt(document.getElementById('mesesAtrasoAntiguidade').value) || 0;
@@ -59,10 +65,7 @@ function executarCalculo() {
     // Captura Domingos e Feriados
     const qtdDomingos = parseInt(document.getElementById('qtdDomingos').value) || 0;
     const qtdFeriadosTrabalhados = parseInt(document.getElementById('qtdFeriadosTrabalhados').value) || 0;
-
-    // Captura VR e VA
-    const valorVR = parseFloat(document.getElementById('valorVR').value) || 0;
-    const valorVA = parseFloat(document.getElementById('valorVA').value) || 0;
+    const dsrQtd = parseInt(document.getElementById('dsrQtd').value) || 0;
 
     // Captura o campo de texto de observações
     const observacoes = document.getElementById('observacoes').value;
@@ -74,6 +77,17 @@ function executarCalculo() {
     // Captura dados do Aviso Prévio
     const tipoAviso = document.getElementById('tipoAviso').value;
     const diasAviso = parseInt(document.getElementById('diasAviso').value) || 0;
+
+    // Captura dados de Alimentação (Nova Lógica)
+    const forneciaAlimentacao = document.getElementById('forneciaAlimentacao').value;
+    let valorIndenizacaoAlimentacao = 0;
+    if (forneciaAlimentacao === 'nao') {
+        // Se não fornecia, captura o valor manual digitado
+        valorIndenizacaoAlimentacao = parseFloat(document.getElementById('valorIndenizacaoAlimentacao').value) || 0;
+    }
+
+    // Captura Seguro-Desemprego (Apenas informativo)
+    const parcelasSeguro = document.getElementById('seguroDesemprego').value;
 
     // --- 2. CÁLCULOS AUTOMÁTICOS (Funções Auxiliares) ---
 
@@ -89,7 +103,10 @@ function executarCalculo() {
         calcularAdicionalNoturno(valorHoraNormal, horasNoturnas) : 0;
 
     // Calcula o valor das férias (proporcional aos dias + 1/3 constitucional)
-    const valorFeriasVencidas = calcularFeriasDias(salarioBase, diasFerias);
+    // NOVA REGRA: 1 mês = 1 salário base. Adicional = Base / 3.
+    const baseFeriasVencidas = salarioBase * mesesFeriasVencidas;
+    const valorFeriasVencidas = baseFeriasVencidas + (baseFeriasVencidas / 3);
+
     const valorFeriasProporcionais = calcularFeriasMeses(salarioBase, mesesFeriasProp);
 
     // Calcula o 13º salário proporcional aos meses trabalhados
@@ -109,9 +126,10 @@ function executarCalculo() {
         reflexoAvisoFerias = umDozeAvosFerias + (umDozeAvosFerias / 3);
     }
 
-    // Domingos e Feriados (Dobro)
+    // Domingos, Feriados e DSR (Regra: Salário / 30 * 2 * Quantidade)
     const valorDomingos = (salarioBase / 30) * 2 * qtdDomingos;
     const valorFeriadosTrab = (salarioBase / 30) * 2 * qtdFeriadosTrabalhados;
+    const valorDSR = (salarioBase / 30) * 2 * dsrQtd;
 
     // Calcula o Abono por Antiguidade (Regra: > 5 anos)
     const valorAbonoAntiguidade = calcularAbonoAntiguidade(salarioBase, anosEmpresa, mesesAtrasoAntiguidade);
@@ -124,17 +142,12 @@ function executarCalculo() {
     
     // Multa de 40% FGTS
     let multaFGTS = 0;
-    if (motivoRescisao === 'semJustaCausa') {
+    if (motivoRescisao === 'semJustaCausa' || motivoRescisao === 'semRegistro') {
         multaFGTS = valorFGTSAcumulado * 0.40;
     }
 
     // Calcula a PLR (Valor direto)
     const valorPLR = calcularPLR(valorPLRAnual, mesesPLR);
-
-    // Calcula VR e VA (Indenizatório) - Considerar apenas 1 mês (último trabalhado)
-    const totalVR = valorVR;
-    const totalVA = valorVA;
-    const totalBeneficios = totalVR + totalVA;
 
     // Contagem informativa de feriados no período
     const totalFeriadosPeriodo = contarFeriados(dataAdmissao, dataAfastamento);
@@ -145,7 +158,7 @@ function executarCalculo() {
     // mas para manter a estrutura simples do código anterior, vamos somar as verbas salariais no Bruto.
     const salarioBruto = salarioBase + valorTotalHE + valorAdicionalNoturno + valorFeriasVencidas + valorFeriasProporcionais + 
                          valorDecimoTerceiro + valorAvisoPrevio + reflexoAviso13 + reflexoAvisoFerias +
-                         outrasVerbasValor + valorAbonoAntiguidade + valorDomingos + valorFeriadosTrab;
+                         outrasVerbasValor + valorAbonoAntiguidade + valorDomingos + valorFeriadosTrab + valorDSR;
 
     // Calcula o valor do desconto do INSS baseado no Bruto
     const valorINSS = salarioBruto * (percINSS / 100);
@@ -161,14 +174,14 @@ function executarCalculo() {
     const salarioLiquido = salarioBruto - totalDescontos;
 
     // Calcula o Total a Receber (Salário Líquido + PLR + Benefícios)
-    const totalReceber = salarioLiquido + valorPLR + totalBeneficios;
+    const totalReceber = salarioLiquido + valorPLR + valorIndenizacaoAlimentacao;
 
     // --- CÁLCULO DOS TOTAIS ORGANIZADOS (PARA EXIBIÇÃO) ---
     // 1. Total da Rescisão (Aviso, Reflexos, Férias, 13º)
     const totalRescisao = valorAvisoPrevio + reflexoAviso13 + reflexoAvisoFerias + valorFeriasVencidas + valorFeriasProporcionais + valorDecimoTerceiro;
 
     // 2. Total da Folha / Extras (Salário, HE, Domingos, Feriados, Adicional, Benefícios, PLR, Outras, Abono)
-    const totalFolhaExtras = salarioBase + valorTotalHE + valorDomingos + valorFeriadosTrab + valorAdicionalNoturno + totalBeneficios + valorPLR + outrasVerbasValor + valorAbonoAntiguidade;
+    const totalFolhaExtras = salarioBase + valorTotalHE + valorDomingos + valorFeriadosTrab + valorDSR + valorAdicionalNoturno + valorIndenizacaoAlimentacao + valorPLR + outrasVerbasValor + valorAbonoAntiguidade;
 
     // --- 3. SAÍDA (Relatório na Página) ---
     
@@ -198,11 +211,13 @@ function executarCalculo() {
         outrasVerbasValor,
         observacoes,
         valorPLR,
-        totalBeneficios,
+        valorIndenizacaoAlimentacao,
         valorDomingos,
         valorFeriadosTrab,
+        valorDSR,
         totalFeriadosPeriodo,
         salarioBruto,
+        parcelasSeguro,
         totalRescisao,
         totalFolhaExtras,
         valorINSS,
@@ -317,17 +332,6 @@ function calcularAdicionalNoturno(valorHora, horasNoturnas) {
     const valorHoraNoturna = valorHora * 0.2;
     // Retorna o valor do adicional vezes as horas noturnas trabalhadas
     return valorHoraNoturna * horasNoturnas;
-}
-
-function calcularFeriasDias(salario, dias) {
-    // Calcula o valor de 1 dia de trabalho (Salário / 30)
-    const valorDia = salario / 30;
-    // Calcula o valor pelos dias de férias gozados/vencidos
-    const valorDiasFerias = valorDia * dias;
-    // Adiciona o terço constitucional (1/3)
-    const tercoConstitucional = valorDiasFerias / 3;
-    // Retorna a soma
-    return valorDiasFerias + tercoConstitucional;
 }
 
 function calcularFeriasMeses(salario, meses) {
@@ -469,10 +473,11 @@ function exibirResultadoNaPagina(dados) {
     atualizarLinha('resAdicionalNoturno', dados.valorAdicionalNoturno);
     atualizarLinha('resDomingos', dados.valorDomingos);
     atualizarLinha('resFeriadosTrab', dados.valorFeriadosTrab);
+    atualizarLinha('resDSR', dados.valorDSR);
     atualizarLinha('resFeriasVencidas', dados.valorFeriasVencidas);
     atualizarLinha('resFeriasProporcionais', dados.valorFeriasProporcionais);
     atualizarLinha('resDecimoTerceiro', dados.valorDecimoTerceiro);
-    atualizarLinha('resVRVA', dados.totalBeneficios);
+    atualizarLinha('resIndenizacaoAlimentacao', dados.valorIndenizacaoAlimentacao);
     atualizarLinha('resAbonoAntiguidade', dados.valorAbonoAntiguidade);
     
     // Novos Totais de Grupo
@@ -498,6 +503,7 @@ function exibirResultadoNaPagina(dados) {
     atualizarLinha('resFGTSAcumulado', dados.valorFGTSAcumulado);
     atualizarLinha('resMultaFGTS', dados.multaFGTS);
     atualizarLinha('resTotalFeriadosPeriodo', dados.totalFeriadosPeriodo, false); // false para não formatar como moeda
+    atualizarLinha('resSeguroDesemprego', dados.parcelasSeguro, false);
 
     // --- 4. OBSERVAÇÕES ---
     const linhaObs = document.getElementById('linhaObservacoes');
