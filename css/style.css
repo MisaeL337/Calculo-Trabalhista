@@ -7,9 +7,10 @@
 }
 
 body {
+    font-size: 12px;
     background-color: #f4f4f4; /* Cinza muito claro para o fundo */
     color: #333; /* Cinza escuro para texto */
-    line-height: 1.6;
+    line-height: 1.15;
 }
 
 /* Cabeçalho estilo Sindicato */
@@ -33,6 +34,30 @@ header h2 {
     color: #ccc; /* Cinza claro */
 }
 
+/* Cabeçalho do Relatório (dentro do card) */
+.report-header {
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 20px;
+    margin: -20px -20px 20px -20px; /* Compensa o padding do card e adiciona margem inferior */
+    border-radius: 4px 4px 0 0; /* Arredonda os cantos superiores para combinar com o card */
+}
+
+.report-header h1 {
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 0;
+}
+
+.report-logo {
+    max-height: 70px;
+    width: auto;
+}
+
 .container {
     width: 90%;
     max-width: 800px;
@@ -42,7 +67,7 @@ header h2 {
 /* Cartão do Formulário */
 .card {
     background-color: #fff; /* Branco */
-    padding: 30px;
+    padding: 20px;
     border: 1px solid #ddd;
     border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -104,7 +129,7 @@ button:hover {
 .resultado-linha {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
+    padding: 4px 0;
     font-size: 1rem;
     align-items: center;
 }
@@ -121,7 +146,7 @@ button:hover {
 .resultado-divisor {
     border: 0;
     border-top: 1px solid #eee;
-    margin: 10px 0;
+    margin: 5px 0;
 }
 
 .resultado-linha.total span {
@@ -137,21 +162,53 @@ button:hover {
     font-size: 1.2rem;
     font-weight: bold;
     background-color: #f0f0f0;
-    padding: 12px;
-    margin: 10px -30px 0 -30px; /* Alinha com as bordas do card */
-    padding-left: 30px;
-    padding-right: 30px;
+    padding: 10px;
+    margin: 10px -20px 0 -20px; /* Alinha com as bordas do card */
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .grupo-titulo {
     font-weight: bold;
     color: #333;
-    margin-top: 20px;
+    margin-top: 15px;
     margin-bottom: 10px;
     text-transform: uppercase;
     font-size: 0.9rem;
     border-bottom: 2px solid #eee;
     padding-bottom: 5px;
+}
+
+/* Bloco para agrupar adicionais e extras */
+.bloco-adicionais {
+    padding: 5px 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+/* Estilos para o detalhamento de férias e PLR */
+.ferias-bloco, .plr-bloco {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #fdfdfd;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+.ferias-titulo, .plr-titulo {
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 5px;
+}
+.ferias-detalhe, .plr-detalhe {
+    padding-left: 20px;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.resultado-linha.ferias-agrupada.terco span:first-child {
+    padding-left: 20px;
+    font-style: italic;
 }
 
 .total-grupo {

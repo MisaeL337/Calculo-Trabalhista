@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora Trabalhista - Sindicato dos Hoteleiros</title>
     <!-- Link para o Favicon: Substitua 'favicon.png' pelo caminho da sua imagem -->
-    <link rel="icon" href="fotos/favcon" type="image/x-icon">
+    <link rel="icon" href="fotos/ChatGPT Image 18 de fev. de 2026, 17_21_00.png" type="image/x-icon">
     <link rel="stylesheet" href="css/style.css">
     
 </head>
@@ -76,6 +76,15 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="percentualHorasExtras">Percentual Horas Extras:</label>
+                    <select id="percentualHorasExtras">
+                        <option value="50">50%</option>
+                        <option value="60">60%</option>
+                        <option value="70">70%</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label for="adicionalNoturno">Adicional Noturno?</label>
                     <select id="adicionalNoturno">
                         <option value="nao">Não</option>
@@ -87,11 +96,12 @@
                 <div class="form-group" id="divHorasNoturnas" style="display:none;">
                     <label for="horasNoturnas">Horas Noturnas Trabalhadas:</label>
                     <input type="number" id="horasNoturnas" placeholder="Ex: 40">
-                </div>
-
-                <div class="form-group">
-                    <label for="mesesFeriasVencidas">Férias Vencidas (Meses):</label>
-                    <input type="number" id="mesesFeriasVencidas" placeholder="Ex: 1 (para 1 ano vencido)">
+                    <label for="percentualNoturno" style="margin-top: 10px;">Percentual Adicional Noturno:</label>
+                    <select id="percentualNoturno">
+                        <option value="20">20%</option>
+                        <option value="25">25%</option>
+                        <option value="40">40%</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -100,13 +110,37 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="percentualDomingo">Percentual Domingos:</label>
+                    <select id="percentualDomingo">
+                        <option value="100">100%</option>
+                        <option value="125">125%</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label for="qtdFeriadosTrabalhados">Feriados Trabalhados (Qtd):</label>
                     <input type="number" id="qtdFeriadosTrabalhados" placeholder="Ex: 1">
                 </div>
 
                 <div class="form-group">
+                    <label for="percentualFeriado">Percentual Feriados:</label>
+                    <select id="percentualFeriado">
+                        <option value="100">100%</option>
+                        <option value="125">125%</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label for="dsrQtd">DSR (Qtd):</label>
                     <input type="number" id="dsrQtd" placeholder="Quantidade de DSR">
+                </div>
+
+                <div class="form-group">
+                    <label for="percentualDSR">Percentual DSR:</label>
+                    <select id="percentualDSR">
+                        <option value="100">100%</option>
+                        <option value="125">125%</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -141,49 +175,70 @@
                     <input type="number" id="mesesAtrasoAntiguidade" placeholder="Ex: 12" value="0">
                 </div>
 
-                <div class="form-group">
-                    <label for="valorPLRAnual">Valor PLR Anual (R$):</label>
-                    <input type="number" id="valorPLRAnual" step="0.01" placeholder="Ex: 1500.00">
+                <!-- 1. PLR -->
+                <div style="border: 1px dashed #ccc; padding: 10px; margin-bottom: 15px;">
+                    <label style="font-weight: bold; margin-bottom: 10px; display: block;">PLR (Participação nos Lucros)</label>
+                     <div class="form-group">
+                        <label for="plrInput">Descrição e Valores:</label>
+                        <input type="text" id="plrInput" placeholder="Ex: 2023, 2024 - 1000, 1200">
+                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="mesesPLR">Meses Trabalhados PLR:</label>
-                    <input type="number" id="mesesPLR" placeholder="Ex: 6">
+                <!-- 2. Verbas Adicionais -->
+                <div style="border: 1px dashed #ccc; padding: 10px; margin-bottom: 15px;">
+                    <label style="font-weight: bold; margin-bottom: 10px; display: block;">Verbas Adicionais</label>
+                    <div class="form-group">
+                        <label for="verbaAdicionalDescricao">Descrição:</label>
+                        <input type="text" id="verbaAdicionalDescricao" placeholder="Ex: Diferença salarial não paga">
+                    </div>
+                    <div class="form-group">
+                        <label for="verbaAdicionalValor">Valor (R$):</label>
+                        <input type="number" id="verbaAdicionalValor" step="0.01" placeholder="Ex: 1200.00">
+                    </div>
                 </div>
 
+                <!-- 4. Seguro-Desemprego -->
+                <div style="border: 1px dashed #ccc; padding: 10px; margin-bottom: 15px;">
+                    <label style="font-weight: bold; margin-bottom: 10px; display: block;">Seguro-Desemprego (Estimativa)</label>
+                    <div class="form-group">
+                        <label for="seguroParcelas">Quantidade de parcelas:</label>
+                        <select id="seguroParcelas">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="seguroValorParcela">Valor de cada parcela (R$):</label>
+                        <input type="number" id="seguroValorParcela" step="0.01" placeholder="Ex: 1320.00">
+                    </div>
+                </div>
+                
                 <div class="form-group">
                     <label for="inss">Desconto INSS (%):</label>
                     <input type="number" id="inss" step="0.1" placeholder="Ex: 7.5">
                 </div>
-
+                
                 <div class="form-group">
                     <label for="irrf">Desconto IRRF (%):</label>
                     <input type="number" id="irrf" step="0.1" placeholder="Ex: 0">
                 </div>
 
-                <div class="form-group">
-                    <label for="verbasAdicionaisValor">Verbas Adicionais (R$):</label>
-                    <input type="number" id="verbasAdicionaisValor" step="0.01" placeholder="Ex: 250.00">
+                <!-- 3. Observações com Reflexo Financeiro -->
+                <div style="border: 1px dashed #ccc; padding: 10px; margin-bottom: 15px;">
+                    <label style="font-weight: bold; margin-bottom: 10px; display: block;">Observações com Reflexo Financeiro</label>
+                    <div class="form-group">
+                        <label for="obsFinanceiraTexto">Descrição do reembolso/valor adicional:</label>
+                        <textarea id="obsFinanceiraTexto" rows="2" placeholder="Ex: Empresa cobrou uniforme indevidamente"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="obsFinanceiraValor">Valor a ser somado (R$):</label>
+                        <input type="number" id="obsFinanceiraValor" step="0.01" placeholder="Ex: 500.00">
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="seguroDesemprego">Seguro-Desemprego (Parcelas):</label>
-                    <select id="seguroDesemprego">
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="observacoes">Observações:</label>
-                    <textarea id="observacoes" rows="3" placeholder="Ex: Período de experiência não cumprido."></textarea>
-                </div>
-
-               
 
                 <button type="button" onclick="executarCalculo()">Calcular Folha</button>
             </form>
@@ -191,6 +246,11 @@
 
         <!-- Seção de Resultados -->
         <section class="card" id="resultadoCard" style="display:none;">
+            <!-- Novo Cabeçalho do Relatório -->
+            <div class="report-header">
+                <img src="fotos/ChatGPT Image 18 de fev. de 2026, 17_21_00.png" alt="Logo Sindehot" class="report-logo">
+            </div>
+
             <h2>Relatório de Cálculo</h2>
             <!-- Cabeçalho do Relatório -->
             <div class="resultado-linha">
@@ -236,6 +296,10 @@
             <!-- 1. Grupo Rescisão -->
             <div class="grupo-titulo">1. Verbas Rescisórias</div>
             <div class="resultado-linha">
+                <span>Saldo de Salário:</span>
+                <span id="resSaldoDeSalario"></span>
+            </div>
+            <div class="resultado-linha">
                 <span>Aviso Prévio:</span>
                 <span id="resAvisoPrevio"></span>
             </div>
@@ -247,48 +311,47 @@
                 <span>Reflexo Aviso (Férias + 1/3):</span>
                 <span id="resReflexoAvisoFerias"></span>
             </div>
-            <div class="resultado-linha">
-                <span>Férias Vencidas + 1/3:</span>
-                <span id="resFeriasVencidas"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>Férias Proporcionais + 1/3:</span>
-                <span id="resFeriasProporcionais"></span>
-            </div>
+            <!-- Container para a nova exibição detalhada de férias -->
+            <div id="containerFeriasAgrupado"></div>
             <div class="resultado-linha">
                 <span>13º Salário Prop.:</span>
                 <span id="resDecimoTerceiro"></span>
             </div>
             <div class="resultado-linha total-grupo">
-                <span>Total da Rescisão:</span>
+                <span>Total Verbas Rescisórias:</span>
                 <span id="resTotalRescisao"></span>
             </div>
 
-            <!-- 2. Grupo Folha / Extras -->
-            <div class="grupo-titulo">2. Folha e Extras</div>
+            <!-- 2. Grupo Adicionais e Extras -->
+            <div class="grupo-titulo">2. Adicionais e Extras</div>
+            <div class="bloco-adicionais">
+                <div class="resultado-linha">
+                    <span id="lblHorasExtras">Horas Extras (50%):</span>
+                    <span id="resHorasExtras"></span>
+                </div>
+                <div class="resultado-linha">
+                    <span id="lblDomingos">Domingos Trabalhados (100%):</span>
+                    <span id="resDomingos"></span>
+                </div>
+                <div class="resultado-linha">
+                    <span id="lblFeriadosTrab">Feriados Trabalhados (100%):</span>
+                    <span id="resFeriadosTrab"></span>
+                </div>
+                <div class="resultado-linha">
+                    <span id="lblDSR">DSR (100%):</span>
+                    <span id="resDSR"></span>
+                </div>
+                <div class="resultado-linha">
+                    <span id="lblAdicionalNoturno">Adicional Noturno:</span>
+                    <span id="resAdicionalNoturno"></span>
+                </div>
+            </div>
+
+            <!-- 3. Outras Verbas e Benefícios -->
+            <div class="grupo-titulo">3. Outras Verbas e Benefícios</div>
             <div class="resultado-linha">
                 <span>Salário Base:</span>
                 <span id="resSalarioBase"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>Horas Extras (50%):</span>
-                <span id="resHorasExtras"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>Domingos Trabalhados (100%):</span>
-                <span id="resDomingos"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>Feriados Trabalhados (100%):</span>
-                <span id="resFeriadosTrab"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>DSR (100%):</span>
-                <span id="resDSR"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>Adicional Noturno:</span>
-                <span id="resAdicionalNoturno"></span>
             </div>
             <div class="resultado-linha">
                 <span id="lblAbonoAntiguidade">Abono por Antiguidade:</span>
@@ -298,18 +361,18 @@
                 <span>Indenização Alimentação:</span>
                 <span id="resIndenizacaoAlimentacao"></span>
             </div>
+            <!-- Container para PLR detalhado -->
+            <div id="containerPLR"></div>
             <div class="resultado-linha">
-                <span>PLR:</span>
-                <span id="resPLR"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>Outras Verbas:</span>
+                <span id="lblVerbasAdicionais">Outras Verbas:</span>
                 <span id="resVerbasAdicionais"></span>
             </div>
             <div class="resultado-linha total-grupo">
-                <span>Total da Folha / Extras:</span>
+                <span>Total de Outras Verbas:</span>
                 <span id="resTotalFolhaExtras"></span>
             </div>
+
+            <hr class="resultado-divisor">
 
             <!-- Descontos -->
             <div class="grupo-titulo">Descontos</div>
@@ -322,7 +385,12 @@
                 <span id="resIRRF"></span>
             </div>
 
-            <hr class="resultado-divisor">
+            <!-- Reembolsos/Adicionais que somam ao líquido -->
+            <div class="resultado-linha">
+                <span id="lblObsFinanceira">Reembolso/Adicional:</span>
+                <span id="resObsFinanceira"></span>
+            </div>
+
             <!-- 3. Total Geral -->
             <div class="resultado-linha total-final">
                 <span>(=) TOTAL GERAL:</span>
@@ -343,13 +411,8 @@
                 <span id="resTotalFeriadosPeriodo"></span>
             </div>
             <div class="resultado-linha info">
-                <span>(i) Seguro-Desemprego (Parcelas):</span>
+                <span>(i) Seguro-Desemprego (Estimativa):</span>
                 <span id="resSeguroDesemprego"></span>
-            </div>
-
-            <div class="resultado-linha obs" id="linhaObservacoes" style="display:none; margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px;">
-                <span style="font-weight: bold; display: block; margin-bottom: 5px;">Observações:</span>
-                <span id="resObservacoes" style="font-style: italic; color: #555;"></span>
             </div>
         </section>
     </main>
