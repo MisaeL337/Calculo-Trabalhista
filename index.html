@@ -1,422 +1,302 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Trabalhista - Sindicato dos Hoteleiros</title>
-    <!-- Link para o Favicon: Substitua 'favicon.png' pelo caminho da sua imagem -->
-    <link rel="icon" href="fotos/ChatGPT Image 18 de fev. de 2026, 17_21_00.png" type="image/x-icon">
-    <link rel="stylesheet" href="css/style.css">
-    
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema Indisponível — Kadosh Tech</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;900&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet" />
+  <link rel="icon" type="faviconKadosh.png" href="faviconKadosh.png">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    :root {
+      --navy:   #152762;
+      --blue:   #29a8e0;
+      --light:  #e8f4fb;
+      --white:  #ffffff;
+      --warn:   #e05c29;
+    }
+ 
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--navy);
+      font-family: 'Barlow', sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+ 
+    /* ── background decoration ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 55% at 50% 0%, rgba(41,168,224,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 100% 100%, rgba(41,168,224,.10) 0%, transparent 60%);
+      pointer-events: none;
+    }
+ 
+    .grid-lines {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(41,168,224,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(41,168,224,.06) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+ 
+    /* ── card ── */
+    .card {
+      position: relative;
+      z-index: 10;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(41,168,224,.25);
+      border-radius: 20px;
+      padding: 52px 56px 48px;
+      max-width: 560px;
+      width: 90%;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 80px rgba(41,168,224,.08), 0 24px 64px rgba(0,0,0,.4);
+      animation: rise .7s cubic-bezier(.22,1,.36,1) both;
+    }
+ 
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+ 
+    /* ── logo ── */
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 40px;
+    }
+ 
+    .logo-wrap img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 12px rgba(41,168,224,.5));
+    }
+ 
+    .brand {
+      text-align: left;
+      line-height: 1;
+    }
+ 
+    .brand-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1.6rem;
+      letter-spacing: .04em;
+      color: var(--white);
+    }
+ 
+    .brand-sub {
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-top: 3px;
+    }
+ 
+    /* ── divider ── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(41,168,224,.4), transparent);
+      margin-bottom: 36px;
+    }
+ 
+    /* ── icon ── */
+    .icon-ring {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 2px solid rgba(224,92,41,.5);
+      background: rgba(224,92,41,.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      animation: pulse-ring 2.4s ease-in-out infinite;
+    }
+ 
+    @keyframes pulse-ring {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(224,92,41,.35); }
+      50%       { box-shadow: 0 0 0 14px rgba(224,92,41,0); }
+    }
+ 
+    .icon-ring svg {
+      width: 32px;
+      height: 32px;
+      color: var(--warn);
+    }
+ 
+    /* ── text ── */
+    .tag {
+      display: inline-block;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--warn);
+      background: rgba(224,92,41,.12);
+      border: 1px solid rgba(224,92,41,.3);
+      border-radius: 100px;
+      padding: 4px 14px;
+      margin-bottom: 18px;
+    }
+ 
+    h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 2rem;
+      letter-spacing: .02em;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+ 
+    h1 span {
+      color: var(--blue);
+    }
+ 
+    .desc {
+      font-size: .97rem;
+      font-weight: 400;
+      color: rgba(255,255,255,.62);
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+ 
+    /* ── CTA ── */
+    .cta-box {
+      background: rgba(41,168,224,.07);
+      border: 1px solid rgba(41,168,224,.2);
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin-bottom: 28px;
+    }
+ 
+    .cta-box p {
+      font-size: .85rem;
+      color: rgba(255,255,255,.55);
+      margin-bottom: 14px;
+    }
+ 
+    .cta-box strong {
+      color: var(--blue);
+      font-weight: 700;
+    }
+ 
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--blue) 0%, #1a86bb 100%);
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: .9rem;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      border-radius: 10px;
+      padding: 13px 28px;
+      cursor: pointer;
+      transition: transform .18s, box-shadow .18s, filter .18s;
+      box-shadow: 0 6px 24px rgba(41,168,224,.3);
+    }
+ 
+    .btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+      box-shadow: 0 10px 32px rgba(41,168,224,.45);
+    }
+ 
+    /* ── footer ── */
+    .footer-note {
+      font-size: .75rem;
+      color: rgba(255,255,255,.28);
+      letter-spacing: .04em;
+    }
+ 
+    .footer-note a {
+      color: rgba(41,168,224,.6);
+      text-decoration: none;
+    }
+ 
+    .footer-note a:hover { color: var(--blue); }
+ 
+    /* ── responsive ── */
+    @media (max-width: 480px) {
+      .card { padding: 40px 28px 36px; }
+      h1 { font-size: 1.6rem; }
+    }
+  </style>
 </head>
 <body>
-
-    <header>
-        <div class="container">
-            <h1>SINDEHOT - SBC</h1>
-            <h2>VERBAS CALCULADAS</h2>
-        </div>
-    </header>
-
-    <main class="container">
-        <section class="card">
-            <h2>Dados do Colaborador</h2>
-            <form id="calcForm">
-                <div class="form-group">
-                    <label for="nomeReclamante">Reclamante:</label>
-                    <input type="text" id="nomeReclamante" placeholder="Nome Completo do Funcionário">
-                </div>
-
-                <div class="form-group">
-                    <label for="nomeReclamada">Reclamada:</label>
-                    <input type="text" id="nomeReclamada" placeholder="Nome da Empresa">
-                </div>
-
-                <div class="form-group">
-                    <label for="dataAdmissao">Data de Admissão:</label>
-                    <input type="date" id="dataAdmissao">
-                </div>
-
-                <div class="form-group">
-                    <label for="dataAfastamento">Data de Afastamento:</label>
-                    <input type="date" id="dataAfastamento">
-                </div>
-
-                <div class="form-group">
-                    <label for="motivoRescisao">Motivo da Rescisão:</label>
-                    <select id="motivoRescisao">
-                        <option value="semJustaCausa">Dispensa sem Justa Causa</option>
-                        <option value="pedidoDemissao">Pedido de Demissão</option>
-                        <option value="justaCausa">Dispensa por Justa Causa</option>
-                        <option value="semRegistro">Sem Registro</option>
-                    </select>
-                </div>
-
-                 <div class="form-group">
-                    <label for="tipoAviso">Tipo de Aviso Prévio:</label>
-                    <select id="tipoAviso">
-                        <option value="trabalhado">Trabalhado</option>
-                        <option value="indenizado">Indenizado</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="diasAviso">Dias de Aviso Prévio:</label>
-                    <input type="number" id="diasAviso" placeholder="Ex: 30">
-                </div>
-
-                <div class="form-group">
-                    <label for="salarioBase">Salário Base (R$):</label>
-                    <input type="number" id="salarioBase" step="0.01" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="horasExtras">Horas Extras (nº de horas):</label>
-                    <input type="number" id="horasExtras" step="0.1" placeholder="Ex: 10.5">
-                </div>
-
-                <div class="form-group">
-                    <label for="percentualHorasExtras">Percentual Horas Extras:</label>
-                    <select id="percentualHorasExtras">
-                        <option value="50">50%</option>
-                        <option value="60">60%</option>
-                        <option value="70">70%</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="adicionalNoturno">Adicional Noturno?</label>
-                    <select id="adicionalNoturno">
-                        <option value="nao">Não</option>
-                        <option value="sim">Sim</option>
-                    </select>
-                </div>
-                
-                <!-- Campo condicional para cálculo correto do adicional -->
-                <div class="form-group" id="divHorasNoturnas" style="display:none;">
-                    <label for="horasNoturnas">Horas Noturnas Trabalhadas:</label>
-                    <input type="number" id="horasNoturnas" placeholder="Ex: 40">
-                    <label for="percentualNoturno" style="margin-top: 10px;">Percentual Adicional Noturno:</label>
-                    <select id="percentualNoturno">
-                        <option value="20">20%</option>
-                        <option value="25">25%</option>
-                        <option value="40">40%</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="qtdDomingos">Domingos Trabalhados (Qtd):</label>
-                    <input type="number" id="qtdDomingos" placeholder="Ex: 2">
-                </div>
-
-                <div class="form-group">
-                    <label for="percentualDomingo">Percentual Domingos:</label>
-                    <select id="percentualDomingo">
-                        <option value="100">100%</option>
-                        <option value="125">125%</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="qtdFeriadosTrabalhados">Feriados Trabalhados (Qtd):</label>
-                    <input type="number" id="qtdFeriadosTrabalhados" placeholder="Ex: 1">
-                </div>
-
-                <div class="form-group">
-                    <label for="percentualFeriado">Percentual Feriados:</label>
-                    <select id="percentualFeriado">
-                        <option value="100">100%</option>
-                        <option value="125">125%</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="dsrQtd">DSR (Qtd):</label>
-                    <input type="number" id="dsrQtd" placeholder="Quantidade de DSR">
-                </div>
-
-                <div class="form-group">
-                    <label for="percentualDSR">Percentual DSR:</label>
-                    <select id="percentualDSR">
-                        <option value="100">100%</option>
-                        <option value="125">125%</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="forneciaAlimentacao">A empresa fornecia refeição ou vale refeição?</label>
-                    <select id="forneciaAlimentacao">
-                        <option value="sim">Sim</option>
-                        <option value="nao">Não</option>
-                    </select>
-                </div>
-
-                <!-- Campos condicionais para Alimentação (Quando Não Fornecia) -->
-                <div id="divIndenizacaoAlimentacao" style="display:none; border: 1px dashed #ccc; padding: 10px; margin-bottom: 15px;">
-                    <label style="color: #c00;">Indenização de Alimentação (Cálculo Manual)</label>
-                    
-                    <div class="form-group">
-                        <label for="mesesSemAlimentacao">Período sem fornecimento (Meses):</label>
-                        <input type="number" id="mesesSemAlimentacao" placeholder="Qtd Meses">
-                    </div>
-                    <div class="form-group">
-                        <label for="diasSemAlimentacao">Período sem fornecimento (Dias):</label>
-                        <input type="number" id="diasSemAlimentacao" placeholder="Qtd Dias">
-                    </div>
-                    <div class="form-group">
-                        <label for="valorIndenizacaoAlimentacao">Valor total da alimentação a ser indenizado (R$):</label>
-                        <input type="number" id="valorIndenizacaoAlimentacao" step="0.01" placeholder="Digite o valor calculado manualmente">
-                        <small style="display:block; margin-top:5px; color:#555;">* O sistema não calcula este valor automaticamente.</small>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="mesesAtrasoAntiguidade">Meses em Atraso (Antiguidade - Opcional):</label>
-                    <input type="number" id="mesesAtrasoAntiguidade" placeholder="Ex: 12" value="0">
-                </div>
-
-                <!-- 1. PLR -->
-                <div style="border: 1px dashed #ccc; padding: 10px; margin-bottom: 15px;">
-                    <label style="font-weight: bold; margin-bottom: 10px; display: block;">PLR (Participação nos Lucros)</label>
-                     <div class="form-group">
-                        <label for="plrInput">Descrição e Valores:</label>
-                        <input type="text" id="plrInput" placeholder="Ex: 2023, 2024 - 1000, 1200">
-                     </div>
-                </div>
-
-                <!-- 2. Verbas Adicionais -->
-                <div style="border: 1px dashed #ccc; padding: 10px; margin-bottom: 15px;">
-                    <label style="font-weight: bold; margin-bottom: 10px; display: block;">Verbas Adicionais</label>
-                    <div class="form-group">
-                        <label for="verbaAdicionalDescricao">Descrição:</label>
-                        <input type="text" id="verbaAdicionalDescricao" placeholder="Ex: Diferença salarial não paga">
-                    </div>
-                    <div class="form-group">
-                        <label for="verbaAdicionalValor">Valor (R$):</label>
-                        <input type="number" id="verbaAdicionalValor" step="0.01" placeholder="Ex: 1200.00">
-                    </div>
-                </div>
-
-                <!-- 4. Seguro-Desemprego -->
-                <div style="border: 1px dashed #ccc; padding: 10px; margin-bottom: 15px;">
-                    <label style="font-weight: bold; margin-bottom: 10px; display: block;">Seguro-Desemprego (Estimativa)</label>
-                    <div class="form-group">
-                        <label for="seguroParcelas">Quantidade de parcelas:</label>
-                        <select id="seguroParcelas">
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="seguroValorParcela">Valor de cada parcela (R$):</label>
-                        <input type="number" id="seguroValorParcela" step="0.01" placeholder="Ex: 1320.00">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="inss">Desconto INSS (%):</label>
-                    <input type="number" id="inss" step="0.1" placeholder="Ex: 7.5">
-                </div>
-                
-                <div class="form-group">
-                    <label for="irrf">Desconto IRRF (%):</label>
-                    <input type="number" id="irrf" step="0.1" placeholder="Ex: 0">
-                </div>
-
-                <!-- 3. Observações com Reflexo Financeiro -->
-                <div style="border: 1px dashed #ccc; padding: 10px; margin-bottom: 15px;">
-                    <label style="font-weight: bold; margin-bottom: 10px; display: block;">Observações com Reflexo Financeiro</label>
-                    <div class="form-group">
-                        <label for="obsFinanceiraTexto">Descrição do reembolso/valor adicional:</label>
-                        <textarea id="obsFinanceiraTexto" rows="2" placeholder="Ex: Empresa cobrou uniforme indevidamente"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="obsFinanceiraValor">Valor a ser somado (R$):</label>
-                        <input type="number" id="obsFinanceiraValor" step="0.01" placeholder="Ex: 500.00">
-                    </div>
-                </div>
-
-                <button type="button" onclick="executarCalculo()">Calcular Folha</button>
-            </form>
-        </section>
-
-        <!-- Seção de Resultados -->
-        <section class="card" id="resultadoCard" style="display:none;">
-            <!-- Novo Cabeçalho do Relatório -->
-            <div class="report-header">
-                <img src="fotos/ChatGPT Image 18 de fev. de 2026, 17_21_00.png" alt="Logo Sindehot" class="report-logo">
-            </div>
-
-            <h2>Relatório de Cálculo</h2>
-            <!-- Cabeçalho do Relatório -->
-            <div class="resultado-linha">
-                <span>Reclamante:</span>
-                <span id="resNomeReclamante"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>Reclamada:</span>
-                <span id="resNomeReclamada"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>Data de Admissão:</span>
-                <span id="resDataAdmissao"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>Data de Afastamento:</span>
-                <span id="resDataAfastamento"></span>
-            </div>
-
-            <!-- Bloco de Resumo do Período Calculado -->
-            <hr class="resultado-divisor">
-            <div class="resultado-linha" style="background-color: #f9f9f9; font-weight: bold; justify-content: center;">
-                <span>RESUMO DO PERÍODO CALCULADO</span>
-            </div>
-            <div class="resultado-linha">
-                <span>Tempo de Casa (Anos):</span>
-                <span id="resAnosEmpresa"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>Meses Trabalhados (FGTS):</span>
-                <span id="resMesesFGTS"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>Avos de 13º Salário:</span>
-                <span id="resMeses13"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>Avos de Férias Prop.:</span>
-                <span id="resMesesFeriasProp"></span>
-            </div>
-            <hr class="resultado-divisor">
-
-            <!-- 1. Grupo Rescisão -->
-            <div class="grupo-titulo">1. Verbas Rescisórias</div>
-            <div class="resultado-linha">
-                <span>Saldo de Salário:</span>
-                <span id="resSaldoDeSalario"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>Aviso Prévio:</span>
-                <span id="resAvisoPrevio"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>Reflexo Aviso (13º):</span>
-                <span id="resReflexoAviso13"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>Reflexo Aviso (Férias + 1/3):</span>
-                <span id="resReflexoAvisoFerias"></span>
-            </div>
-            <!-- Container para a nova exibição detalhada de férias -->
-            <div id="containerFeriasAgrupado"></div>
-            <div class="resultado-linha">
-                <span>13º Salário Prop.:</span>
-                <span id="resDecimoTerceiro"></span>
-            </div>
-            <div class="resultado-linha total-grupo">
-                <span>Total Verbas Rescisórias:</span>
-                <span id="resTotalRescisao"></span>
-            </div>
-
-            <!-- 2. Grupo Adicionais e Extras -->
-            <div class="grupo-titulo">2. Adicionais e Extras</div>
-            <div class="bloco-adicionais">
-                <div class="resultado-linha">
-                    <span id="lblHorasExtras">Horas Extras (50%):</span>
-                    <span id="resHorasExtras"></span>
-                </div>
-                <div class="resultado-linha">
-                    <span id="lblDomingos">Domingos Trabalhados (100%):</span>
-                    <span id="resDomingos"></span>
-                </div>
-                <div class="resultado-linha">
-                    <span id="lblFeriadosTrab">Feriados Trabalhados (100%):</span>
-                    <span id="resFeriadosTrab"></span>
-                </div>
-                <div class="resultado-linha">
-                    <span id="lblDSR">DSR (100%):</span>
-                    <span id="resDSR"></span>
-                </div>
-                <div class="resultado-linha">
-                    <span id="lblAdicionalNoturno">Adicional Noturno:</span>
-                    <span id="resAdicionalNoturno"></span>
-                </div>
-            </div>
-
-            <!-- 3. Outras Verbas e Benefícios -->
-            <div class="grupo-titulo">3. Outras Verbas e Benefícios</div>
-            <div class="resultado-linha">
-                <span>Salário Base:</span>
-                <span id="resSalarioBase"></span>
-            </div>
-            <div class="resultado-linha">
-                <span id="lblAbonoAntiguidade">Abono por Antiguidade:</span>
-                <span id="resAbonoAntiguidade"></span>
-            </div>
-            <div class="resultado-linha">
-                <span>Indenização Alimentação:</span>
-                <span id="resIndenizacaoAlimentacao"></span>
-            </div>
-            <!-- Container para PLR detalhado -->
-            <div id="containerPLR"></div>
-            <div class="resultado-linha">
-                <span id="lblVerbasAdicionais">Outras Verbas:</span>
-                <span id="resVerbasAdicionais"></span>
-            </div>
-            <div class="resultado-linha total-grupo">
-                <span>Total de Outras Verbas:</span>
-                <span id="resTotalFolhaExtras"></span>
-            </div>
-
-            <hr class="resultado-divisor">
-
-            <!-- Descontos -->
-            <div class="grupo-titulo">Descontos</div>
-            <div class="resultado-linha desconto">
-                <span>(-) Desconto INSS:</span>
-                <span id="resINSS"></span>
-            </div>
-            <div class="resultado-linha desconto">
-                <span>(-) Desconto IRRF:</span>
-                <span id="resIRRF"></span>
-            </div>
-
-            <!-- Reembolsos/Adicionais que somam ao líquido -->
-            <div class="resultado-linha">
-                <span id="lblObsFinanceira">Reembolso/Adicional:</span>
-                <span id="resObsFinanceira"></span>
-            </div>
-
-            <!-- 3. Total Geral -->
-            <div class="resultado-linha total-final">
-                <span>(=) TOTAL GERAL:</span>
-                <span id="resTotalReceber"></span>
-            </div>
-
-            <hr class="resultado-divisor">
-            <div class="resultado-linha info">
-                <span>(i) FGTS Acumulado (Estimado):</span>
-                <span id="resFGTSAcumulado"></span>
-            </div>
-            <div class="resultado-linha info">
-                <span>(i) Multa FGTS (40%):</span>
-                <span id="resMultaFGTS"></span>
-            </div>
-            <div class="resultado-linha info">
-                <span>(i) Feriados no Período (Total):</span>
-                <span id="resTotalFeriadosPeriodo"></span>
-            </div>
-            <div class="resultado-linha info">
-                <span>(i) Seguro-Desemprego (Estimativa):</span>
-                <span id="resSeguroDesemprego"></span>
-            </div>
-        </section>
-    </main>
-
-    <script src="script.js"></script>
+  <div class="grid-lines"></div>
+ 
+  <div class="card">
+ 
+    <!-- Logo -->
+    <div class="logo-wrap">
+      <img src="logoKadosh.png" alt="Kadosh Tech" />
+      <div class="brand">
+        <div class="brand-name">KADOSH</div>
+        <div class="brand-sub">Tech</div>
+      </div>
+    </div>
+ 
+    <div class="divider"></div>
+ 
+    <!-- Ícone de alerta -->
+    <div class="icon-ring">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+      </svg>
+    </div>
+ 
+    <div class="tag">Acesso Suspenso</div>
+ 
+    <h1>Sistema Temporariamente<br /><span>Indisponível</span></h1>
+ 
+    <p class="desc">
+      O acesso ao <strong style="color:rgba(255,255,255,.8)">Programa de Cálculo Trabalhista</strong> foi suspenso
+      devido à ausência de pagamento da mensalidade vigente.<br /><br />
+      Para reativar seu acesso imediatamente, regularize sua situação e aguarde a liberação automática.
+    </p>
+ 
+    <!-- CTA -->
+    <div class="cta-box">
+      <p>Dúvidas ou para realizar o pagamento, entre em contato com a <strong>Kadosh Tech</strong>:</p>
+      <a class="btn" href="https://wa.me/5511943719478?text=Ol%C3%A1%2C%20preciso%20regularizar%20o%20acesso%20ao%20sistema%20de%20C%C3%A1lculo%20Trabalhista." target="_blank">
+        <!-- WhatsApp icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.535 5.858L.057 23.5l5.797-1.52A11.933 11.933 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.893a9.878 9.878 0 01-5.031-1.378l-.36-.214-3.742.981.999-3.648-.235-.374A9.861 9.861 0 012.107 12C2.107 6.58 6.58 2.107 12 2.107c5.42 0 9.893 4.473 9.893 9.893 0 5.42-4.473 9.893-9.893 9.893z"/>
+        </svg>
+        Falar com Suporte
+      </a>
+    </div>
+ 
+    <p class="footer-note">
+      © 2025 Kadosh Tech · <a href="https://kadosh-tech.vercel.app/" target="_blank">kadosh-tech.vercel.app</a>
+    </p>
+ 
+  </div>
 </body>
 </html>
